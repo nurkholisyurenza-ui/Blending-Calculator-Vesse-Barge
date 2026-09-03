@@ -9,37 +9,125 @@
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
+        /* Minimalist Dark Black Theme Overrides */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif !important;
+            background: #000000 !important;
+            color: #e4e4e7 !important;
+        }
+
+        /* Remove gradients and glass effects, replace with flat dark panels */
+        .bg-gradient-to-br, .bg-gradient-to-r, .glass-panel, 
+        .bg-slate-800, .bg-slate-900, .bg-slate-950, 
+        .bg-slate-800\/80, .bg-slate-900\/50, .bg-slate-900\/60, .bg-slate-700, .bg-slate-900\/30, .bg-slate-700\/50,
+        .bg-black\/60 {
+            background: #121212 !important;
+            background-image: none !important;
+            box-shadow: none !important;
+            backdrop-filter: none !important;
+        }
+
+        /* Modal backdrop */
+        #helpModal, #exportModal {
+            background: rgba(0, 0, 0, 0.8) !important;
         }
 
         .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #27272a !important;
+            border-radius: 4px !important;
         }
 
-        /* Sticky Columns for many barges */
-        .sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 10;
-            background: #0f172a;
+        /* Override text colors for high contrast */
+        .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .text-slate-500, .text-slate-600 {
+            color: #a1a1aa !important;
         }
-        .sticky-col-2 {
-            position: sticky;
-            left: 100px;
-            z-index: 10;
-            background: #0f172a;
+
+        h1, h2, h3, h4, .text-white {
+            color: #ffffff !important;
         }
+
+        /* Tame the accent colors but keep them visible on dark */
+        .text-emerald-400 { color: #34d399 !important; }
+        .text-blue-400 { color: #60a5fa !important; }
+        .text-orange-400 { color: #fb923c !important; }
+        .text-orange-300 { color: #fdba74 !important; font-weight: bold; }
+        .text-red-400, .text-red-300 { color: #f87171 !important; }
+        .text-violet-400, .text-violet-300 { color: #a78bfa !important; }
+        .text-amber-400, .text-amber-300 { color: #fbbf24 !important; }
+        
+        .border-t-4.border-emerald-500 { border-top-color: #34d399 !important; }
+        .border-t-4.border-blue-500 { border-top-color: #60a5fa !important; }
+
+        /* Borders */
+        .border-slate-700, .border-slate-600, .border-slate-500, .border-slate-700\/50, .divide-slate-700\/50 > *, .border-white\/10 {
+            border-color: #27272a !important;
+        }
+
+        /* Buttons */
+        button {
+            border-radius: 4px !important;
+            font-weight: 500 !important;
+            box-shadow: none !important;
+            border: 1px solid transparent !important;
+        }
+        
+        /* Specific button backgrounds */
+        #solveBtn { background: #7c3aed !important; color: white !important; }
+        #solveBtn:hover { background: #6d28d9 !important; }
+        #exportExcelBtn { background: #2563eb !important; color: white !important; }
+        #calcBtn { background: #059669 !important; color: white !important; }
+        #addVesselBtn, #addRuleBtn { background: #4f46e5 !important; color: white !important; }
+        #uploadBtn, #uploadVesselBtn { background: #18181b !important; color: #e4e4e7 !important; border: 1px solid #3f3f46 !important; }
+        #uploadBtn:hover, #uploadVesselBtn:hover { background: #27272a !important; }
+        
+        .bulk-apply-btn { color: #a1a1aa; }
+        
+        /* Inputs */
+        input:not(.used-input) {
+            background: #000000 !important;
+            border: 1px solid #3f3f46 !important;
+            color: #ffffff !important;
+            border-radius: 4px !important;
+        }
+        input.used-input {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border-radius: 4px !important;
+        }
+        input:focus { border-color: #3b82f6 !important; outline: none !important; }
+
+        /* Table & Sticky columns */
+        th {
+            background: #09090b !important;
+            color: #e4e4e7 !important;
+            border-bottom: 1px solid #3f3f46 !important;
+        }
+        
+        .sticky-col, .sticky-col-2 {
+            position: sticky;
+            z-index: 10;
+            background: #121212 !important;
+            border-right: 1px solid #27272a !important;
+        }
+        .sticky-col { left: 0; }
+        .sticky-col-2 { left: 100px; }
+        
         thead th.sticky-col, thead th.sticky-col-2 {
             z-index: 20;
-            background: #1e293b;
+            background: #09090b !important;
         }
+        
+        tbody tr:hover { background-color: #18181b !important; }
+        
+        /* Badges */
+        .bg-emerald-900\/30 { background: #022c22 !important; color: #34d399 !important; border: 1px solid #064e3b !important; }
+        .bg-blue-900\/40 { background: #172554 !important; color: #60a5fa !important; border: 1px solid #1e3a8a !important; }
+        .bg-red-900\/40 { background: #450a0a !important; color: #f87171 !important; border: 1px solid #7f1d1d !important; }
+        .bg-red-500\/20 { background: #450a0a !important; color: #f87171 !important; }
+        
+        /* Progress bars */
+        .bg-slate-700 { background: #27272a !important; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- ===== Embedded LP Simplex Solver (offline, no CDN needed) ===== -->
     <script>
@@ -163,10 +251,14 @@
 
 <body class="min-h-screen p-6">
     <div class="max-w-screen-2xl mx-auto space-y-6">
-        <header class="text-center space-y-2 mb-6">
-            <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-                Coal Blending Calculator <span style="font-size:0.55em;color:#64748b;font-weight:400;vertical-align:middle;"> v1.2.0 LP</span></h1>
-            <p class="text-slate-400">Optimize your coal blends for multiple vessels simultaneously.</p>
+        <header class="relative text-center space-y-2 mb-8 flex flex-col items-center justify-center pt-2">
+            <!-- Filter invert(1) turns a white background into black (which blends into the dark theme) and makes the logo white. -->
+            <img src="Adaro1.png" alt="Adaro Logo" class="absolute left-0 -top-2 md:-top-4 h-16 md:h-24 w-auto object-contain opacity-90" style="filter: invert(1) grayscale(1) contrast(1.2) brightness(1.5);">
+            <div class="w-full">
+                <h1 class="text-4xl font-bold">
+                    Coal Blending Calculator <span style="font-size:0.55em;color:#64748b;font-weight:400;vertical-align:middle;"> v1.2.0 LP</span></h1>
+                <p class="text-slate-400 mt-2">Optimize your coal blends for multiple vessels simultaneously.</p>
+            </div>
         </header>
 
         <!-- Global Control Bar -->
@@ -412,6 +504,7 @@
                                 </tr>
                             </thead>
                             <tbody id="rep_rm_table" class="divide-y divide-slate-700/50"></tbody>
+                            <tfoot id="rep_rm_foot" class="bg-slate-900 border-t-2 border-slate-600 font-bold"></tfoot>
                         </table>
                     </div>
                 </div>
@@ -430,6 +523,9 @@
                             <tbody id="rep_alloc_body" class="divide-y divide-slate-700/50">
                                 <!-- JS injected -->
                             </tbody>
+                            <tfoot id="rep_alloc_foot" class="bg-slate-900 border-t-2 border-slate-600">
+                                <!-- JS injected -->
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -489,6 +585,12 @@
                             <strong class="lang-id hidden">Pilih Brand Produk:</strong>
                             <span class="lang-en">Use the dropdown at the top left to filter the view for a specific product.</span>
                             <span class="lang-id hidden">Gunakan dropdown di kiri atas untuk memfilter tampilan pada produk tertentu.</span>
+                        </li>
+                        <li>
+                            <strong class="lang-en">Excluded Stock IDs (per vessel):</strong>
+                            <strong class="lang-id hidden">Stock ID Dikecualikan (per tongkang):</strong>
+                            <span class="lang-en">On each vessel card, type comma-separated Stock IDs (e.g. <code class="bg-slate-700 px-1 rounded text-red-300">TSN100, E300</code>) to ban those raw materials from that vessel. Auto-Solve will not assign any MT of those materials — regardless of how many different ROM sources they have.</span>
+                            <span class="lang-id hidden">Pada setiap kartu tongkang, ketik Stock ID yang dipisahkan koma (mis. <code class="bg-slate-700 px-1 rounded text-red-300">TSN100, E300</code>) untuk melarang bahan baku tersebut dari tongkang itu. Auto-Solve tidak akan mengalokasikan MT apapun dari material tersebut — tidak peduli berapa banyak sumber ROM yang dimilikinya.</span>
                         </li>
                     </ul>
                 </section>
@@ -782,6 +884,18 @@
                             <input type="number" step="0.01" class="w-full bg-slate-900 border border-slate-600 rounded px-1 py-1 text-xs text-white focus:border-emerald-500 outline-none" value="${tsVal}" placeholder="—" onchange="updateVesselData('${v.id}', 'ts', this.value)">
                         </div>
                     </div>
+                    <div class="mt-2">
+                        <label class="text-[10px] text-red-400 uppercase tracking-wider flex items-center space-x-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                            <span>Excluded Stock IDs</span>
+                        </label>
+                        <input type="text" class="w-full bg-slate-900 border border-red-900/50 rounded px-2 py-1 text-xs text-red-300 placeholder-slate-600 focus:border-red-500 outline-none mt-0.5"
+                            value="${v.excludedStocks || ''}"
+                            placeholder="e.g. TSN100, E300"
+                            title="Comma-separated Stock IDs that this vessel is NOT allowed to use. Auto-Solve will exclude all ROMs of these materials."
+                            onchange="updateVesselData('${v.id}', 'excludedStocks', this.value)">
+                        ${(v.excludedStocks && v.excludedStocks.trim()) ? `<div class="mt-1 flex flex-wrap gap-1">${v.excludedStocks.split(',').map(id => id.trim()).filter(Boolean).map(id => `<span class="text-[9px] bg-red-900/40 border border-red-700 text-red-300 px-1.5 py-0.5 rounded">${id}</span>`).join('')}</div>` : ''}
+                    </div>
                     <div class="mt-2 flex items-center space-x-1">
                         <span class="text-[9px] text-slate-600 uppercase tracking-wider">Product:</span>
                         <span class="text-[9px] font-bold text-emerald-400 bg-emerald-900/30 px-1.5 py-0.5 rounded">${v.product || '—'}</span>
@@ -828,7 +942,8 @@
                 company: '', name: 'New Vessel',
                 tonnage: 50000, cv: 5000,
                 ash: null, ts: null,
-                product: currentProduct
+                product: currentProduct,
+                excludedStocks: ''
             });
             renderVessels();
         });
@@ -841,7 +956,7 @@
         window.updateVesselData = function (id, field, value) {
             const v = vesselsData.find(x => x.id === id);
             if (!v) return;
-            if (field === 'company' || field === 'name') {
+            if (field === 'company' || field === 'name' || field === 'excludedStocks') {
                 v[field] = value;
             } else if (field === 'ash' || field === 'ts') {
                 // Allow null/empty for optional fields
@@ -986,7 +1101,8 @@
             filteredStocks.forEach(stock => {
                 let tdUsed = '';
                 filteredVessels.forEach(v => {
-                    const usedVal = stock.allocations?.[v.id] || '';
+                    const allocVal = stock.allocations?.[v.id];
+                    const usedVal = (allocVal !== undefined && allocVal !== null) ? allocVal : '';
                     const isLocked = stock.vesselRules?.[v.id]?.locked || false;
                     const maxPct = stock.vesselRules?.[v.id]?.maxPercent || '';
                     
@@ -1057,6 +1173,9 @@
             const bulkBtn = e.target.closest('.bulk-apply-btn');
 
             if (lockBtn) {
+                // Force a blend calculation first to grab any manual input values that haven't fired an event
+                calculateBlend();
+                
                 const uid = lockBtn.getAttribute('data-stock');
                 const vId = lockBtn.getAttribute('data-vessel');
                 const s = findStock(uid);
@@ -1359,12 +1478,19 @@
             });
 
             const rmTableBody = document.getElementById('rep_rm_table');
+            const rmTableFoot = document.getElementById('rep_rm_foot');
             const rmRows = Object.values(rmGroups).sort((a, b) => b.used - a.used);
             if (rmRows.length === 0) {
                 rmTableBody.innerHTML = `<tr><td colspan="6" class="px-3 py-4 text-center text-slate-500 italic">No data yet</td></tr>`;
+                rmTableFoot.innerHTML = '';
             } else {
+                let sumAvail = 0, sumUsed = 0, sumRemain = 0;
                 rmTableBody.innerHTML = rmRows.map(g => {
                     const remaining = g.available - g.used;
+                    sumAvail += g.available;
+                    sumUsed += g.used;
+                    sumRemain += remaining;
+                    
                     const pct = g.available > 0 ? Math.min(100, (g.used / g.available * 100)) : 0;
                     const barColor = pct > 90 ? 'bg-red-500' : pct > 60 ? 'bg-amber-400' : 'bg-emerald-500';
                     const remainColor = remaining < 0 ? 'text-red-400' : 'text-slate-300';
@@ -1385,11 +1511,26 @@
                         </td>
                     </tr>`;
                 }).join('');
+                
+                const sumPct = sumAvail > 0 ? (sumUsed / sumAvail * 100).toFixed(1) : 0;
+                rmTableFoot.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="px-3 py-3 text-right text-slate-200">
+                            <span class="lang-en">Grand Total:</span>
+                            <span class="lang-id hidden">Total Keseluruhan:</span>
+                        </td>
+                        <td class="px-3 py-3 text-right text-slate-200">${sumAvail.toLocaleString()}</td>
+                        <td class="px-3 py-3 text-right text-white">${Math.round(sumUsed).toLocaleString()}</td>
+                        <td class="px-3 py-3 text-right ${sumRemain < 0 ? 'text-red-400' : 'text-slate-200'}">${Math.round(sumRemain).toLocaleString()}</td>
+                        <td class="px-3 py-3 text-slate-200">${sumPct}%</td>
+                    </tr>
+                `;
             }
 
             // ── 3. Per-Vessel Allocation Detail table ──
             const allocHead = document.getElementById('rep_alloc_head');
             const allocBody = document.getElementById('rep_alloc_body');
+            const allocFoot = document.getElementById('rep_alloc_foot');
 
             // Build header
             let headHtml = `<tr class="text-[10px] font-semibold tracking-wide text-slate-400 border-b border-slate-700 uppercase">
@@ -1401,15 +1542,28 @@
             headHtml += `<th class="px-3 py-2 text-right text-amber-300">Total Used (MT)</th></tr>`;
             allocHead.innerHTML = headHtml;
 
-            // Build rows
+            // Build rows & Footers
             if (filteredStocks.length === 0) {
                 allocBody.innerHTML = `<tr><td colspan="${3 + filteredVessels.length}" class="px-3 py-4 text-center text-slate-500 italic">No stock data</td></tr>`;
+                allocFoot.innerHTML = '';
             } else {
+                let vesselTotals = {};
+                let vesselCVs = {};
+                filteredVessels.forEach(v => { vesselTotals[v.id] = 0; vesselCVs[v.id] = 0; });
+                let grandTotal = 0;
+                let grandCV = 0;
+
                 allocBody.innerHTML = filteredStocks.map(s => {
                     const rowTotal = filteredVessels.reduce((sum, v) => sum + (parseFloat(s.allocations?.[v.id]) || 0), 0);
                     if (rowTotal === 0) return '';   // skip unused stocks
+                    
+                    grandTotal += rowTotal;
+                    grandCV += rowTotal * (s.cv || 0);
+
                     let cells = filteredVessels.map(v => {
                         const used = parseFloat(s.allocations?.[v.id]) || 0;
+                        vesselTotals[v.id] += used;
+                        vesselCVs[v.id] += used * (s.cv || 0);
                         const pct  = v.tonnage > 0 ? (used / v.tonnage * 100).toFixed(1) : '0.0';
                         return `<td class="px-3 py-1.5 text-center">
                             <span class="text-slate-200">${used > 0 ? Math.round(used).toLocaleString() : '—'}</span>
@@ -1423,6 +1577,32 @@
                         <td class="px-3 py-1.5 text-right font-semibold text-amber-300">${Math.round(rowTotal).toLocaleString()}</td>
                     </tr>`;
                 }).filter(Boolean).join('') || `<tr><td colspan="${3 + filteredVessels.length}" class="px-3 py-4 text-center text-slate-500 italic">No allocations yet. Run Auto-Solve or enter values manually.</td></tr>`;
+
+                // Footer for Table 2
+                let footCells = filteredVessels.map(v => {
+                    const mt = vesselTotals[v.id];
+                    const cv = mt > 0 ? Math.round(vesselCVs[v.id] / mt) : 0;
+                    return `<td class="px-3 py-3 text-center">
+                        <div class="font-bold text-white">${Math.round(mt).toLocaleString()} MT</div>
+                        <div class="text-[10px] font-normal text-blue-400">CV: ${cv.toLocaleString()}</div>
+                    </td>`;
+                }).join('');
+                
+                const avgGrandCV = grandTotal > 0 ? Math.round(grandCV / grandTotal) : 0;
+                
+                allocFoot.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="px-3 py-3 text-right text-slate-200 font-bold">
+                            <span class="lang-en">Total & Avg CV:</span>
+                            <span class="lang-id hidden">Total & Rata-rata CV:</span>
+                        </td>
+                        ${footCells}
+                        <td class="px-3 py-3 text-right">
+                            <div class="font-bold text-amber-400">${Math.round(grandTotal).toLocaleString()} MT</div>
+                            <div class="text-[10px] font-normal text-blue-400">CV: ${avgGrandCV.toLocaleString()}</div>
+                        </td>
+                    </tr>
+                `;
             }
         }
 
@@ -1592,7 +1772,7 @@
                 });
             });
 
-            // Deduct locked allocations from pool
+            // Deduct locked allocations from pool (Independent Scenario Mode)
             allStocksData.forEach(s => {
                 filteredVessels.forEach(v => {
                     const isLocked = s.vesselRules?.[v.id]?.locked || false;
@@ -1642,13 +1822,21 @@
                 // Exact-rule UIDs are pre-handled — exclude them from the free pool
                 const exactRuleUids = new Set(rulesForProduct.filter(r => r.ruleType === 'exact').map(r => r.stockUid));
 
+                // Parse vessel-level excluded Stock IDs (case-insensitive, ignores ROM)
+                const excludedIds = new Set(
+                    (vessel.excludedStocks || '').split(',')
+                        .map(id => id.trim().toUpperCase())
+                        .filter(Boolean)
+                );
+
                 // Eligible unlocked stocks with pool availability > 0
                 let eligible = allStocksData.filter(s => {
                     const sProdNorm = String(s.product || '').toUpperCase().trim();
                     const matchesProduct = !s.product || sProdNorm === currentProduct;
                     const isLockedForVessel = s.vesselRules?.[vessel.id]?.locked || false;
                     const isExactRuleLocked = exactRuleUids.has(s.uid);
-                    return matchesProduct && !isLockedForVessel && !isExactRuleLocked && (pool[s.uid] || 0) > 0;
+                    const isExcluded = excludedIds.has(String(s.stockId || '').toUpperCase().trim());
+                    return matchesProduct && !isLockedForVessel && !isExactRuleLocked && !isExcluded && (pool[s.uid] || 0) > 0;
                 }).map(s => {
                     // Priority: manual vessel max% > global max rule > default max%
                     const vMaxPct = s.vesselRules?.[vessel.id]?.maxPercent;
